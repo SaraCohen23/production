@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>הצעת מחיר מהירה</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    * { font-family: 'Heebo', sans-serif; }
+
+    :root {
+      --ink: #1a1a2e;
+      --paper: #f5f0e8;
+      --accent: #e8642c;
+      --accent-dark: #c04d1a;
+      --surface: #ffffff;
+      --muted: #7a7a8a;
+      --border: #e2ddd4;
+      --success: #2d7a4f;
+    }
+
+    body {
+      background-color: var(--paper);
+      color: var(--ink);
+      min-height: 100vh;
+    }
+
+    .header-bg {
+      background: var(--ink);
+      position: relative;
+      overflow: hidden;
+    }
+    .header-bg::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 20px,
+        rgba(255,255,255,0.03) 20px,
+        rgba(255,255,255,0.03) 40px
+      );
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+    }
+
+    .input-field {
+      width: 100%;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 16px;
+      background: #fafaf8;
+      color: var(--ink);
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+      text-align: right;
+    }
+    .input-field:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(232,100,44,0.12);
+      background: white;
+    }
+    .input-field::placeholder { color: #b0aaa0; }
+
+    label {
+      display: block;
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 6px;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+
+    .section-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border-bottom: 1.5px solid var(--border);
+      padding-bottom: 8px;
+      margin-bottom: 16px;
+    }
+
+    .calc-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px dashed var(--border);
+      font-size: 15px;
+    }
+    .calc-row:last-child { border-bottom: none; }
+
+    .total-row {
+      background: var(--ink);
+      color: white;
+      border-radius: 10px;
+      padding: 14px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .quote-box {
+      background: #f9f6f0;
+      border: 1.5px solid var(--border);
+      border-right: 4px solid var(--accent);
+      border-radius: 12px;
+      padding: 18px;
+      font-size: 15px;
+      line-height: 1.8;
+      color: var(--ink);
+      white-space: pre-wrap;
+      direction: rtl;
+      text-align: right;
+      min-height: 120px;
+      position: relative;
+    }
+
+    .btn-copy {
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 14px;
+      padding: 18px 24px;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 4px 20px rgba(232,100,44,0.35);
+      transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+      letter-spacing: 0.01em;
+    }
+    .btn-copy:active {
+      transform: scale(0.97);
+      box-shadow: 0 2px 8px rgba(232,100,44,0.3);
+    }
+    .btn-copy:hover { background: var(--accent-dark); }
+
+    .btn-copy.copied {
+      background: var(--success);
+      box-shadow: 0 4px 20px rgba(45,122,79,0.35);
+    }
+
+    .num-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      background: var(--accent);
+      color: white;
+      border-radius: 50%;
+      font-size: 11px;
+      font-weight: 800;
+      margin-left: 8px;
+      flex-shrink: 0;
+    }
+
+    .whatsapp-icon {
+      width: 24px;
+      height: 24px;
+      fill: white;
+    }
+
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button { opacity: 1; }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="header-bg px-5 pt-10 pb-8 relative">
+    <div class="relative z-10">
+      <div class="flex items-center gap-3 mb-2">
+        <div style="background:var(--accent);width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;">🔧</div>
+        <span style="color:rgba(255,255,255,0.5);font-size:12px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">כלי עסקי</span>
+      </div>
+      <h1 style="color:white;font-size:26px;font-weight:900;line-height:1.2;">הצעת מחיר<br/><span style="color:var(--accent);">מהירה ומקצועית</span></h1>
+      <p style="color:rgba(255,255,255,0.5);font-size:14px;margin-top:8px;">מלא את הפרטים — קבל הצעה מוכנה לשליחה</p>
+    </div>
+  </div>
+
+  <div class="px-4 py-6 max-w-lg mx-auto space-y-5">
+
+    <!-- פרטי לקוח -->
+    <div class="card p-5">
+      <div class="section-title">
+        <span class="num-badge">1</span> פרטי הלקוח והעבודה
+      </div>
+      <div class="space-y-4">
+        <div>
+          <label>שם הלקוח</label>
+          <input class="input-field" type="text" id="clientName" placeholder="למשל: ישראל ישראלי" oninput="calculate()" />
+        </div>
+        <div>
+          <label>תיאור העבודה</label>
+          <textarea class="input-field" id="jobDesc" rows="3" placeholder="למשל: תיקון צנרת בחדר אמבטיה והחלפת ברז" style="resize:none;" oninput="calculate()"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- עלויות -->
+    <div class="card p-5">
+      <div class="section-title">
+        <span class="num-badge">2</span> פירוט עלויות
+      </div>
+      <div class="space-y-4">
+        <div>
+          <label>עלות חומרים (₪)</label>
+          <input class="input-field" type="number" id="materials" placeholder="0" min="0" oninput="calculate()" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label>שעות עבודה</label>
+            <input class="input-field" type="number" id="hours" placeholder="0" min="0" step="0.5" oninput="calculate()" />
+          </div>
+          <div>
+            <label>תעריף לשעה (₪)</label>
+            <input class="input-field" type="number" id="hourlyRate" placeholder="0" min="0" oninput="calculate()" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- חישוב -->
+    <div class="card p-5">
+      <div class="section-title">
+        <span class="num-badge">3</span> סיכום מחיר
+      </div>
+      <div class="space-y-1">
+        <div class="calc-row">
+          <span style="color:var(--muted);">עלות חומרים</span>
+          <span id="disp-materials" style="font-weight:600;">₪0.00</span>
+        </div>
+        <div class="calc-row">
+          <span style="color:var(--muted);">שכר עבודה</span>
+          <span id="disp-labor" style="font-weight:600;">₪0.00</span>
+        </div>
+        <div class="calc-row">
+          <span style="color:var(--muted);">סכום לפני מע"מ</span>
+          <span id="disp-subtotal" style="font-weight:700;">₪0.00</span>
+        </div>
+        <div class="calc-row">
+          <span style="color:var(--muted);">מע"מ 17%</span>
+          <span id="disp-vat" style="font-weight:600;color:var(--accent);">₪0.00</span>
+        </div>
+        <div style="height:12px;"></div>
+        <div class="total-row">
+          <span>סה"כ לתשלום</span>
+          <span id="disp-total">₪0.00</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- הצעה מוכנה -->
+    <div class="card p-5">
+      <div class="section-title">
+        <span class="num-badge">4</span> הצעה מוכנה לשליחה
+      </div>
+      <div class="quote-box" id="quoteText">מלא את הפרטים למעלה כדי לייצר הצעת מחיר...</div>
+    </div>
+
+    <!-- כפתור שליחה -->
+    <button class="btn-copy" id="copyBtn" onclick="copyAndSend()">
+      <svg class="whatsapp-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+      </svg>
+      העתק ושליחה בוואטסאפ
+    </button>
+    
+    <p style="text-align:center;font-size:12px;color:var(--muted);padding-bottom:24px;">הטקסט מועתק ללוח — פתח וואטסאפ והדבק</p>
+
+  </div>
+
+  <script>
+    const VAT = 0.17;
+
+    function fmt(n) {
+      return '₪' + n.toLocaleString('he-IL', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function calculate() {
+      const materials = parseFloat(document.getElementById('materials').value) || 0;
+      const hours     = parseFloat(document.getElementById('hours').value)     || 0;
+      const rate      = parseFloat(document.getElementById('hourlyRate').value) || 0;
+      const client    = document.getElementById('clientName').value.trim();
+      const job       = document.getElementById('jobDesc').value.trim();
+
+      const labor    = hours * rate;
+      const subtotal = materials + labor;
+      const vat      = subtotal * VAT;
+      const total    = subtotal + vat;
+
+      document.getElementById('disp-materials').textContent = fmt(materials);
+      document.getElementById('disp-labor').textContent     = fmt(labor);
+      document.getElementById('disp-subtotal').textContent  = fmt(subtotal);
+      document.getElementById('disp-vat').textContent       = fmt(vat);
+      document.getElementById('disp-total').textContent     = fmt(total);
+
+      const clientLine = client || '[שם הלקוח]';
+      const jobLine    = job    || '[תיאור העבודה]';
+
+      let lines = [];
+      lines.push(`שלום ${clientLine},`);
+      lines.push('');
+      lines.push(`להלן הצעת המחיר עבור: ${jobLine}`);
+      lines.push('');
+      lines.push('פירוט העלויות:');
+      if (materials > 0) lines.push(`• חומרים: ${fmt(materials)}`);
+      if (hours > 0 && rate > 0) lines.push(`• שכר עבודה (${hours} שע' × ${fmt(rate)}): ${fmt(labor)}`);
+      lines.push('');
+      lines.push(`סכום לפני מע"מ: ${fmt(subtotal)}`);
+      lines.push(`מע"מ 17%: ${fmt(vat)}`);
+      lines.push(`סה"כ לתשלום: ${fmt(total)}`);
+      lines.push('');
+      lines.push('המחיר כולל אחריות על העבודה.');
+      lines.push('לשאלות נוספות, אני כאן! 🙏');
+
+      document.getElementById('quoteText').textContent = lines.join('\n');
+    }
+
+    function copyAndSend() {
+      const text = document.getElementById('quoteText').textContent;
+      const btn  = document.getElementById('copyBtn');
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => showCopied(btn));
+      } else {
+        // fallback
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        try { document.execCommand('copy'); } catch(e) {}
+        document.body.removeChild(ta);
+        showCopied(btn);
+      }
+    }
+
+    function showCopied(btn) {
+      btn.classList.add('copied');
+      btn.innerHTML = `
+        <svg style="width:24px;height:24px;fill:white;" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+        הועתק! פתח וואטסאפ והדבק
+      `;
+      setTimeout(() => {
+        btn.classList.remove('copied');
+        btn.innerHTML = `
+          <svg style="width:24px;height:24px;fill:white;" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+          </svg>
+          העתק ושליחה בוואטסאפ
+        `;
+      }, 3000);
+    }
+
+    // init
+    calculate();
+  </script>
+</body>
+</html>
